@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clinic Appointment Booking</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+        }
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #333;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Clinic Appointment Form</h2>
+
+<form onsubmit="return printSummary();">
+
+    <!-- Full Name -->
+    <label for="fullname">Full Name:</label><br>
+    <input type="text" id="fullname" required><br><br>
+
+    <!-- ID Number -->
+    <label for="idnum">ID Number:</label><br>
+    <input type="text" id="idnum" required><br><br>
+
+    <!-- Service -->
+    <label for="service">Select Service:</label><br>
+    <select id="service">
+        <option>Dental Check-up</option>
+        <option>Eye Check-up</option>
+        <option>Physical Exam</option>
+    </select><br><br>
+
+    <!-- Sessions -->
+    <label for="sessions">Number of Sessions (max 3):</label><br>
+    <input type="number" id="sessions" max="3" min="1" value="1"><br><br>
+
+    <!-- Customer Type -->
+    <label for="custType">Customer Type:</label><br>
+    <select id="custType">
+        <option>Regular</option>
+        <option>PWD/Senior</option>
+    </select><br><br>
+
+    <!-- Submit -->
+    <input type="submit" value="Book Appointment">
+
+</form>
+
+<div id="output"></div>
+
+<script>
+function calculateSubtotal(service, sessions) {
+    let price;
+
+    switch(service) {
+        case "Dental Check-up":
+            price = 850;
+            break;
+        case "Eye Check-up":
+            price = 900;
+            break;
+        case "Physical Exam":
+            price = 800;
+            break;
+        default:
+            return "Service not found";
+    }
+
+    return price * sessions;
+}
+
+function calculateDiscount(total, custType) {
+    if (custType === "PWD/Senior") {
+        return total * 0.15;
+    }
+    return 0;
+}
+
+function printSummary() {
+    let name = document.getElementById("fullname").value;
+    let id = document.getElementById("idnum").value;
+    let service = document.getElementById("service").value;
+    let sessions = parseInt(document.getElementById("sessions").value);
+    let custType = document.getElementById("custType").value;
+
+    let subtotal = calculateSubtotal(service, sessions);
+    let discount = calculateDiscount(subtotal, custType);
+    let total = subtotal - discount;
+
+    // Service label (as required)
+    let serviceLabel = "";
+    if (service === "Dental Check-up") {
+        serviceLabel = "Dental Check-up (PHP 850)";
+    } else if (service === "Eye Check-up") {
+        serviceLabel = "Eye Check-up (PHP 900)";
+    } else if (service === "Physical Exam") {
+        serviceLabel = "Physical Exam (PHP 800)";
+    }
+
+    document.getElementById("output").innerHTML = `
+        <div class="summary">
+            <h3>Appointment Summary</h3>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>ID:</strong> ${id}</p>
+            <p><strong>Service:</strong> ${serviceLabel}</p>
+            <p><strong>Sessions:</strong> ${sessions}</p>
+            <p><strong>Customer Type:</strong> ${custType}</p>
+            <p><strong>Subtotal:</strong> PHP ${subtotal}</p>
+            <p><strong>Discount:</strong> PHP ${discount.toFixed(2)}</p>
+            <p><strong>Total:</strong> PHP ${total.toFixed(2)}</p>
+        </div>
+    `;
+
+    return false; // prevent page reload
+}
+</script>
+
+</body>
+</html>
